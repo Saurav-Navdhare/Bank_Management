@@ -53,7 +53,7 @@ def date_verify(a):
 
 def verify(a): #Date in YYYY/MM/DD format
     if(month_verify(a) in ['odd', 'even', 'feb']):
-        if(date_verify(a) == True):
+        if(date_verify(a) is True):
             return True
         else:
             return date_verify(a)
@@ -71,7 +71,7 @@ def date_input(): ## Needed to be Recoded also at Line 150 Employee_end
             if(c.isdigit()):
                 if(len(c) == 1):
                     c = '0' + c
-                if(verify(a + '/' + b + '/' + c) == True):
+                if(verify(a + '/' + b + '/' + c) is True):
                     return (True, a + '/' + b + '/' + c)
                 else:
                     return (False, verify(a + '/' + b +'/' + c))
