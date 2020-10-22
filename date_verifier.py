@@ -4,10 +4,7 @@
 def leap_year(a):
     b = int(a[:4])
     if(b%100 == 0):
-        if(b%400 == 0):
-            return True
-        else:
-            return False
+        return (b%400 == 0)
     elif(b%4 == 0):
         return True
     else:
