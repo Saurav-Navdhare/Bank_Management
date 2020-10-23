@@ -1,4 +1,7 @@
 #Employee Menu
+import sys
+
+
 from Employee_end import *
 
 def anvv(account):
@@ -141,4 +144,4 @@ while(True):
                  value = trans(check_balance(account), 4, account)
                  print(value, '\n')
     else:
-        exit()
+        sys.exit()
