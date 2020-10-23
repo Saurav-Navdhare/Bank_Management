@@ -60,8 +60,8 @@ def check_account( account):
     for i in mycursor:
         if i == (account,):
             return True
-    else:
-        return False
+        
+    return False
 
 def account_details( reciever):
     mycursor.execute("Select account, name, email, Balance from user where account = %s", (reciever,))
@@ -138,9 +138,8 @@ def istransid( account, transid):
     for i in mycursor.fetchall():
         if i[0] == transid:
             return True
-
-    else:
-        return False
+        
+    return False
 
 def trans_history( account):  
     while(True):
