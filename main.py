@@ -141,7 +141,7 @@ while(True):
         if(anvv(account)[0]):
             b = input('Enter Y if you are Sure to delete account where account number = '+account + '\n').lower()
             if(b == 'y'):
-                 value = Ee.trans(check_balance(account), 4, account)
+                 value = Ee.trans(Ee.check_balance(account), 4, account)
                  print(value, '\n')
     else:
         sys.exit()
