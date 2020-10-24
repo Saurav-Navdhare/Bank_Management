@@ -19,7 +19,7 @@ def month_verify(a):
     
 def date_verify(a):
     b = int(a[8:])
-    if not(b in range(1,32)):
+    if (b not in range(1,32)):
         return "The maximum range of date is from 1 to 31 including 31\n"
     elif(month_verify(a) == 'odd'):
         if(b <32):
