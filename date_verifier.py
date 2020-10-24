@@ -3,10 +3,7 @@
 
 def leap_year(a):
     b = int(a[:4])
-    if((b%4 == 0 and b%100 != 0) or b% 400 == 0):
-        return True
-    else:
-        return False
+    return bool(((b%4 == 0 and b%100 != 0) or b% 400 == 0))
 
 def month_verify(a):
     b = a[5:7]
