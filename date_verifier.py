@@ -27,17 +27,15 @@ def date_verify(a):
                 if(b < 31):
                     return (True,)
                 return(False, 'Date in this month must be between 0 to 30')
-            else:
-                if(leap_year(a)):
-                    if (b < 30):
-                        return (True,)
-                    return (False, 'Date in February of Leap year must be in 0 to 29')
-        
-                if(b < 29):
+            if(leap_year(a)):
+                if (b < 30):
                     return (True,)
-                return (False, 'Date in February of a Normal year must be in 0 to 28')
+                return (False, 'Date in February of Leap year must be in 0 to 29')
+        
+            if(b < 29):
+                return (True,)
+            return (False, 'Date in February of a Normal year must be in 0 to 28')
         return (False, 'Date on any month must be in 0 to 31')
-
     return month_verify(a)
 
 def date_input():
