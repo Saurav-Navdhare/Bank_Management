@@ -34,12 +34,10 @@ def check_details(phone, email):
             if(email in j):
                 k=2
                 break
-        else:
-            return (True,)
+        return (True,)
     if(k == 1):
         return (False,'Phone Number Already Exists in Database')
-    else:
-        return (False,'Email Already Exsists in database')
+    return (False,'Email Already Exsists in database')
 
 
 
@@ -73,8 +71,7 @@ def check_balance( account):
         for i in mycursor:
             for j in i:
                 return j
-    else:
-        return "Account does not Exsist"
+    return "Account does not Exsist"
 
 def transid(account):
     mycursor.execute("select transid from user where account = %s", (account,))
@@ -82,7 +79,7 @@ def transid(account):
         return (account + str(int(i[0][16:])+1))
 
 # mode must be entered from frontend side 1 = Transfer, 2 = Cash Withdrwal, 3 = Cash Deposit
-def trans( amount, mode, account, reciever='Self'):
+def trans(amount, mode, account, reciever='Self'):
     # Mode 1 is only vaialable on Customer side, all are avaialable on Employee side
 
     if(mode == 1):
@@ -99,10 +96,8 @@ def trans( amount, mode, account, reciever='Self'):
                 mycursor.execute("Update user set balance = balance + %s and transid = %s where account = %s", (amount, tid, reciever))
                 mydb.commit()
                 return f"{amount} Rs has been transferred from {account} to {reciever}"
-            else:
-                return "Transaction is Aborted"
-        else:
-            return "Insufficient Balance"
+            return "Transaction is Aborted"
+        return "Insufficient Balance"
 
 
     if(mode == 2):
@@ -113,8 +108,7 @@ def trans( amount, mode, account, reciever='Self'):
             mycursor.execute("update user set balance = balance +%s and transid = %s where account = %s", (amount, tid, reciever))
             mydb.commit()
             return str(amount)+ " Rs has been withdrawn from " + account
-        else:
-            return "Insufficient Balance"
+        return "Insufficient Balance"
 
     if(mode == 3):
         tid = transid(account)
@@ -152,8 +146,7 @@ def trans_history( account):
                     if(istransid(account, transid)):
                         mycursor.execute("select * from trans where transid = %s and(sender = %s or beneficiary = %s)", (transid,account, account)) #Comment  for i in value :  print(i, '  ' ,end = '')
                         return(True, mycursor.fetchone())
-                    else:
-                        return("False transid Provided")
+                    return("False transid Provided")
                 elif(a == 2):  ## Needed to be recoded
                     b = date_input()
                     if(b[0]):
@@ -162,18 +155,15 @@ def trans_history( account):
                         if(c[0]):
                             mycursor.execute("select * from trans where date between %s and %s and (sender = %s or beneficiary = %s)", (b[1], c[1], account, account))
                             return (True,mycursor.fetchall())   #Here Loop on this value and Print Details
-                        else:
-                            return c[1]
-                    else:
-                        return b[1]
+                        return c[1]
+                    return b[1]
 
                 else:
                     b = date_input()
                     if(b[0]):
                         mycursor.execute("Select * from trans where date = %s and (sender = %s or beneficiary = %s)", (b[1], account, account))
                         return [True, mycursor.fetchall()]
-                    else:
-                        return b[1]
+                    return b[1]
                             
 def close_account( account):
     if(check_account(account)):
@@ -181,10 +171,8 @@ def close_account( account):
             mycursor.execute("delete from user where account = %s", (account,))
             mydb.commit()
             return "Account deleted Successfully"
-        else:
-            k = check_balance(account)
-            trans(k, 3, account)
-            mycursor.execute("delete from user where account = %s", (account,))
-            return "Account deleted succesfully and Rs " + k + " will be returned to you as cash"
-    else:
-        return "account doesn't exsist"
+        k = check_balance(account)
+        trans(k, 3, account)
+        mycursor.execute("delete from user where account = %s", (account,))
+        return "Account deleted succesfully and Rs " + k + " will be returned to you as cash"
+    return "account doesn't exsist"

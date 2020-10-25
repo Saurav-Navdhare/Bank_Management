@@ -9,11 +9,9 @@ def anvv(account):
                 if(len(account) == 16):
                     if(Ee.check_account(account)):
                         return (True,)
-                    else:
-                        return (False, "Account Doesn't Exists\n")
+                    return (False, "Account Doesn't Exists\n")
                 return(False, "Account Number is not of 16 digits\n")
-        else:
-            return(False, "Please Enter Numbers Only\n")
+        return(False, "Please Enter Numbers Only\n")
 while(True):
    
     a = int(input('''Press the following keys for the repective functions\n
