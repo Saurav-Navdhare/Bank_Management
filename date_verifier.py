@@ -62,6 +62,3 @@ def date_input():
             return(False, date_verify(d)[1])
     else:
         return(False, month_verify(d)[1])
-
-
-print(date_input())
