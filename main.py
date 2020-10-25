@@ -43,7 +43,7 @@ while(True):
             b = input('Enter \n1 - For Bank to Bank Transaction \n2 - For Cash withdrawal by Customer \n3 - For Cash credit by Customer\n')
             if(b.isdigit()):
                 b = int(b)
-                if(b in range(1,4)):    
+                if(b in range(1,4)):
                     if(b == 1):
                         amount = input("Enter the amount in Rupees to Transfer\n")
                         if(amount.isdigit()):

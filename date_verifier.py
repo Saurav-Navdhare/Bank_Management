@@ -1,10 +1,8 @@
 # Date Verification Module
 
-
 def leap_year(a):
     b = int(a[:4])
-    return bool((b%4 == 0 and b%100 != 0) or b% 400 == 0)
-        
+    return bool((b%4 == 0 and b%100 != 0) or b% 400 == 0)    
 
 def month_verify(a):
     b = int(a[5:7])
@@ -19,7 +17,7 @@ def month_verify(a):
 def date_verify(a):
     b = int(a[8:])
     if(month_verify(a)[0]):
-        if(b > 1 and b < 32):
+        if(b >1 and b < 32):
             c = month_verify(a)[1]
             if(c == '1'):
                 return (True,)
@@ -31,7 +29,6 @@ def date_verify(a):
                 if (b < 30):
                     return (True,)
                 return (False, 'Date in February of Leap year must be in 0 to 29')
-        
             if(b < 29):
                 return (True,)
             return (False, 'Date in February of a Normal year must be in 0 to 28')

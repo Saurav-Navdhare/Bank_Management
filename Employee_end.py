@@ -17,8 +17,7 @@ mycursor.execute('Create database if not exists bank_Management')
 mycursor.execute('Use Bank_Management')
 mycursor.execute('create table if not exists user(account char(17) Primary Key, name Varchar(20) Not Null, Phone char(11) Unique Not Null,email varchar(35) Unique Not Null, Balance int(10) check(Balance >-1) Not Null, transid varchar(25) not null, TOA varchar(10) Not Null, DOC date Not Null)')
 mycursor.execute('create table if not exists trans(Sender char(17) references user(account), Beneficiary char(17) references user(account), transid varchar(25) not null, date date not null, amount int(10), bank int(10) check(bank>-1))')
-
-            
+           
 # Will be called When approved by an employee ; Employee Menu Side
 
 def check_details(phone, email):
@@ -38,8 +37,6 @@ def check_details(phone, email):
     if(k == 1):
         return (False,'Phone Number Already Exists in Database')
     return (False,'Email Already Exsists in database')
-
-
 
 def new_user( name, phone, email):
 
@@ -99,7 +96,6 @@ def trans(amount, mode, account, reciever='Self'):
             return "Transaction is Aborted"
         return "Insufficient Balance"
 
-
     if(mode == 2):
         tid = transid(account)
         if(check_balance(account) >= amount+1000):
@@ -135,7 +131,7 @@ def istransid( account, transid):
         
     return False
 
-def trans_history( account):  
+def trans_history(account):
     while(True):
         a = input("Enter 1. For only Transid Searched Transaction \n2. For Transaction between Specific Date Range \n3. For Transaction Made on a day\n")
         if(a.isdigit()):
