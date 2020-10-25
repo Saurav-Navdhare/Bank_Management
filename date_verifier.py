@@ -11,12 +11,10 @@ def month_verify(a):
     if(b > 0 and b < 13):
         if( b in "01 03 05 07 08 10 12".split()):
             return (True,'1')
-        elif(b in "04 06 09 11".split()):
+        if(b in "04 06 09 11".split()):
             return (True,'2')
-        else:
-            return (True,'3')
-    else:
-        return (False,"Month should only lie between 1 to 12")
+        return (True,'3')
+    return (False,"Month should only lie between 1 to 12")
 
 def date_verify(a):
     b = int(a[8:])
@@ -25,27 +23,22 @@ def date_verify(a):
             c = month_verify(a)[1]
             if(c == '1'):
                 return (True,)
-            elif(c == '2'):
+            if(c == '2'):
                 if(b < 31):
                     return (True,)
-                else:
-                    return(False, 'Date in this month must be between 0 to 30')
+                return(False, 'Date in this month must be between 0 to 30')
             else:
                 if(leap_year(a)):
                     if (b < 30):
                         return (True,)
-                    else:
-                        return (False, 'Date in February of Leap year must be in 0 to 29')
-                else:
-                    if(b < 29):
-                        return (True,)
-                    else:
-                        return (False, 'Date in February of a Normal year must be in 0 to 28')
-        else:
-            return (False, 'Date on any month must be in 0 to 31')
+                    return (False, 'Date in February of Leap year must be in 0 to 29')
+        
+                if(b < 29):
+                    return (True,)
+                return (False, 'Date in February of a Normal year must be in 0 to 28')
+        return (False, 'Date on any month must be in 0 to 31')
 
-    else:
-        return month_verify(a)
+    return month_verify(a)
 
 def date_input():
     a = input('Enter Year \n')
@@ -58,7 +51,5 @@ def date_input():
     if(month_verify(d)[0]):
         if(date_verify(d)[0]):
             return(True, d)
-        else:
-            return(False, date_verify(d)[1])
-    else:
-        return(False, month_verify(d)[1])
+        return(False, date_verify(d)[1])
+    return(False, month_verify(d)[1])
