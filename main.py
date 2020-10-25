@@ -12,8 +12,7 @@ def anvv(account):
                     return (False, "Account Doesn't Exists\n")
                 return(False, "Account Number is not of 16 digits\n")
         return(False, "Please Enter Numbers Only\n")
-while(True):
-   
+while(True):   
     a = int(input('''Press the following keys for the repective functions\n
         1 - New User
         2 - User Details

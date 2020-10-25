@@ -2,7 +2,7 @@
 
 def leap_year(a):
     b = int(a[:4])
-    return bool((b%4 == 0 and b%100 != 0) or b% 400 == 0)    
+    return bool((b%4 == 0 and b%100 != 0) or b% 400 == 0)
 
 def month_verify(a):
     b = int(a[5:7])
