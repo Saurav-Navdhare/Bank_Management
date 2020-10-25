@@ -147,7 +147,7 @@ def trans_history( account):
                         mycursor.execute("select * from trans where transid = %s and(sender = %s or beneficiary = %s)", (transid,account, account)) #Comment  for i in value :  print(i, '  ' ,end = '')
                         return(True, mycursor.fetchone())
                     return("False transid Provided")
-                elif(a == 2):  ## Needed to be recoded
+                if(a == 2):  ## Needed to be recoded
                     b = date_input()
                     if(b[0]):
                         print('Enter Second Date')
