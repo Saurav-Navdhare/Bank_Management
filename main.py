@@ -117,8 +117,7 @@ while(True):
         while(True):
             account = input('Enter Account Number\n')
             if(anvv(account)[0]):
-                value = Ee.trans_history(account)
-                
+                value = Ee.trans_history(account)           
                 if(value[0]):
                     for i in value[1]:
                         for j in i:

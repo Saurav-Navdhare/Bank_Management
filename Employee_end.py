@@ -54,7 +54,6 @@ def check_account( account):
     for i in mycursor:
         if i == (account,):
             return True
-        
     return False
 
 def account_details( reciever):
