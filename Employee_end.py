@@ -158,12 +158,11 @@ def trans_history( account):
                         return c[1]
                     return b[1]
 
-                else:
-                    b = date_input()
-                    if(b[0]):
-                        mycursor.execute("Select * from trans where date = %s and (sender = %s or beneficiary = %s)", (b[1], account, account))
-                        return [True, mycursor.fetchall()]
-                    return b[1]
+                b = date_input()
+                if(b[0]):
+                    mycursor.execute("Select * from trans where date = %s and (sender = %s or beneficiary = %s)", (b[1], account, account))
+                    return [True, mycursor.fetchall()]
+                return b[1]
                             
 def close_account( account):
     if(check_account(account)):
