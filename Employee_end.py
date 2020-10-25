@@ -16,7 +16,7 @@ mycursor =  mydb.cursor(buffered=True)
 mycursor.execute('Create database if not exists bank_Management')
 mycursor.execute('Use Bank_Management')
 mycursor.execute('create table if not exists user(account char(17) Primary Key, name Varchar(20) Not Null, Phone char(11) Unique Not Null,email varchar(35) Unique Not Null, Balance int(10) check(Balance >-1) Not Null, transid varchar(25) not null, TOA varchar(10) Not Null, DOC date Not Null)')
-mycursor.execute('create table if not exists trans(Sender char(17) references user(account), Beneficiary char(17) references user(account), transid varchar(25) not null, date date not null, amount int(10), bank int(10) check(bank>-1))')           
+mycursor.execute('create table if not exists trans(Sender char(17) references user(account), Beneficiary char(17) references user(account), transid varchar(25) not null, date date not null, amount int(10), bank int(10) check(bank>-1))')
 # Will be called When approved by an employee ; Employee Menu Side
 
 def check_details(phone, email):
@@ -126,7 +126,6 @@ def istransid( account, transid):
     for i in mycursor.fetchall():
         if i[0] == transid:
             return True
-        
     return False
 
 def trans_history(account):

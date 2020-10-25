@@ -12,7 +12,7 @@ def anvv(account):
                     return (False, "Account Doesn't Exists\n")
                 return(False, "Account Number is not of 16 digits\n")
         return(False, "Please Enter Numbers Only\n")
-while(True):   
+while(True):
     a = int(input('''Press the following keys for the repective functions\n
         1 - New User
         2 - User Details
@@ -117,13 +117,12 @@ while(True):
         while(True):
             account = input('Enter Account Number\n')
             if(anvv(account)[0]):
-                value = Ee.trans_history(account)           
+                value = Ee.trans_history(account)
                 if(value[0]):
                     for i in value[1]:
                         for j in i:
                             print(j, ' ', end ='')
                         print()
-                
                 c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                 if(c != 'y'):
                     break
