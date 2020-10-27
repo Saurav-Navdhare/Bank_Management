@@ -16,7 +16,8 @@ mycursor =  mydb.cursor(buffered=True)
 mycursor.execute('Create database if not exists bank_Management')
 mycursor.execute('Use Bank_Management')
 mycursor.execute('create table if not exists user(account char(17) Primary Key, name Varchar(20) Not Null, Phone char(11) Unique Not Null,email varchar(35) Unique Not Null, Balance int(10) check(Balance >-1) Not Null, transid varchar(25) not null, TOA varchar(10) Not Null, DOC date Not Null)')
-mycursor.execute('create table if not exists trans(Sender char(17) references user(account), Beneficiary char(17) references user(account), transid varchar(25) not null, date date not null, amount int(10), bank int(10) check(bank>-1))')
+mycursor.execute('create table if not exists trans(Sender char(17) references user(account), Beneficiary char(17) references user(account), transid varchar(25) not null, date date not null, amount int(10))')
+mycursor.execute('create table if not exists amount(transid varchar(25) not null Primary Key,Sender_amount char(17), Beneficiary_amount char(17) )')
 # Will be called When approved by an employee ; Employee Menu Side
 
 def check_details(phone, email):
@@ -45,9 +46,10 @@ def new_user( name, phone, email):
     account = datetime.today().strftime('%Y%m%d%H%M%S%f')[:16]
 
     mycursor.execute("Insert into user values(%s,%s,%s,%s,%s,%s,%s,%s)", (account, name, phone, email, 1000, account+'1', "savings", Date))
-    mycursor.execute("Insert into trans values('Self', %s, %s, %s, %s, %s)",(account, account+'1', Date, 1000, 1000))
+    mycursor.execute("Insert into trans values('Self', %s, %s, %s, %s)",(account, account+'1', Date, 1000))
+    mycursor.execute("Insert into amount values(%s,%s,%s)", (account+'1', "Null", 1000))
     mydb.commit()
-    return (True,"Successfully new Account Created with account number - "+account+" and First Transaction id as " + account+'1')
+    return (True,"Successfully new Account Created with account number - "+account+"\nFirst Transaction id is " + account+'1')
 
 def check_account( account):
     mycursor.execute("select account from user")
@@ -87,6 +89,7 @@ def trans(amount, mode, account, reciever='Self'):
             if(a == 'y'):
                 tid = transid(account)
                 mycursor.execute("insert into trans values(%s,%s,%s,%s,%s,%s)", (account, reciever, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account) - amount))
+                mycursor.execute("insert into amount values(%s,%s,%s)", tid, check_account(account) - amount, check_balance(account) + amount)
                 mycursor.execute("Update user set balance = balance - %s where account = %s", (amount, account))
                 mycursor.execute("Update user set balance = balance + %s and transid = %s where account = %s", (amount, tid, reciever))
                 mydb.commit()
@@ -98,6 +101,7 @@ def trans(amount, mode, account, reciever='Self'):
         tid = transid(account)
         if(check_balance(account) >= amount+1000):
             mycursor.execute("insert into trans values(%s,'self',%s,%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account)-amount))
+            mycursor.execute("insert into amount values(%s,%s,%s)", (tid, check_balance(amount)-amount, "Null"))
             mycursor.execute("update user set balance = balance -%s where account = %s", (amount, account))
             mycursor.execute("update user set balance = balance +%s and transid = %s where account = %s", (amount, tid, reciever))
             mydb.commit()
@@ -107,6 +111,7 @@ def trans(amount, mode, account, reciever='Self'):
     if(mode == 3):
         tid = transid(account)
         mycursor.execute("insert into trans values('self', %s, %s, %s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account)+amount))
+        mycursor.execute("insert into amount values(%s,%s,%s)", (tid, "Null", check_balance(amount)+amount))
         mycursor.execute("update user set balance = balance + %s where account = %s", (amount, account))
         mycursor.execute("update user set transid = %s where account = %s", (tid, account))
         mydb.commit()
@@ -115,10 +120,11 @@ def trans(amount, mode, account, reciever='Self'):
     if(mode == 4):
         tid = transid(account)
         mycursor.execute("insert into trans values(%s,'self',%s,%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), check_balance(account), 0))
+        mycursor.execute("insert into amount values(%s,%s,%s)", (tid, 0, "Null"))
         mycursor.execute("delete from user where account = %s", (account,))
         mycursor.execute("update user set balance = balance +%s and transid = %s where account = %s", (amount, tid, reciever))
         mydb.commit()
-        return str(amount)+ " Rs has been withdrawn from " + account + "And Account Has been Closed"
+        return str(amount)+ " Rs has been withdrawn from " + account + " with transid "+tid+"And Account Has been Closed"
 
 def istransid( account, transid):
     mycursor.execute(
@@ -137,8 +143,12 @@ def trans_history(account):
                 if(a == 1):
                     transid = input("enter transid\n")
                     if(istransid(account, transid)):
-                        mycursor.execute("select * from trans where transid = %s and(sender = %s or beneficiary = %s)", (transid,account, account)) #Comment  for i in value :  print(i, '  ' ,end = '')
-                        return(True, mycursor.fetchone())
+                        i = []
+                        mycursor.execute("select transid, sender, beneficiary, date, sender_amount from trans natural join amount where trans.transid = %s and sender = %s", (transid,account))
+                        i.append(mycursor.fetchone())
+                        mycursor.execute("select transid, sender, beneficiary, date, Beneficiary_amount from trans natural join amount where trans.transid = %s and beneficiary = %s", (transid,account))
+                        i.append(mycursor.fetchone())
+                        return(True, i)
                     return("False transid Provided")
                 if(a == 2):  ## Needed to be recoded
                     b = date_input()
@@ -146,14 +156,21 @@ def trans_history(account):
                         print('Enter Second Date')
                         c = date_input()
                         if(c[0]):
-                            mycursor.execute("select * from trans where date between %s and %s and (sender = %s or beneficiary = %s)", (b[1], c[1], account, account))
-                            return (True,mycursor.fetchall())   #Here Loop on this value and Print Details
+                            i = []
+                            mycursor.execute("select transid, sender, beneficiary, date, sender_amount from trans natural join amount where Date between %s and %s and sender = %s)", (b,c,account))
+                            i.append(mycursor.fetchall())
+                            mycursor.execute("select transid, sender, beneficiary, date, beneficiary_amount from trans natural join amount where Date between %s and %s and beneficiary = %s)", (b,c,account))
+                            i.append(mycursor.fetchall())
+                            return (True,i)   #Here Loop on this value and Print Details
                         return c[1]
                     return b[1]
 
                 b = date_input()
                 if(b[0]):
-                    mycursor.execute("Select * from trans where date = %s and (sender = %s or beneficiary = %s)", (b[1], account, account))
+                    i = []
+                    mycursor.execute("select transid, sender, beneficiary, date, sender_amount from trans natural join amount where Date = %s and sender = %s", (b, account))
+                    i.append(mycursor.fetchall())
+                    mycursor.execute("select transid, sender, beneficiary, date, Beneficiary_amount from trans natural join amount where Date = %s and beneficiary = %s", (b, account))
                     return [True, mycursor.fetchall()]
                 return b[1]
 def close_account( account):

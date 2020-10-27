@@ -119,9 +119,15 @@ while(True):
             if(anvv(account)[0]):
                 value = Ee.trans_history(account)
                 if(value[0]):
-                    for i in value[1]:
-                        for j in i:
-                            print(j, ' ', end ='')
+                    if(value[1][0] is not None):
+                        print("Transid      Sender      Beneficiary      Date      Sender_amount")
+                        for i in value[1][0]:
+                            print(i, end = ' ')
+                        print()
+                    if(value[1][1] is not None):
+                        print('Transid      Sender      Beneficiary      Date      Beneficiary_amount')
+                        for i in value[1][1]:
+                            print(i, end = ' ')
                         print()
                 c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                 if(c != 'y'):
