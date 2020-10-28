@@ -21,13 +21,13 @@ while(True):
 
     elif(a == 2):
         b = input('Enter Account Number\n')
-        if(anvv(b)[0]):
+        if(Ee.check_account(b)[0]):
             for i in Ee.account_details(b):
                 for j in i:
                     print(j, "  ",end = '')
                 print()
         else:
-            print(anvv(b)[1])
+            print(Ee.check_account(b)[1])
 
     elif(a == 3):
         while(True):
@@ -40,9 +40,9 @@ while(True):
                         if(amount.isdigit()):
                             amount = int(amount)
                             sender = input("Enter the Sender's account Number\n")
-                            if(anvv(sender)[0]):
+                            if(Ee.check_account(sender)[0]):
                                 beneficiary = input("Enter the beneficiarie's Account Number\n")
-                                if(anvv(beneficiary)[0]):
+                                if(Ee.check_account(beneficiary)[0]):
                                     value = Ee.trans(amount, 1, sender, beneficiary)
                                     print(value)
                                     c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
