@@ -45,6 +45,6 @@ while(True):
                     if(c != 'y'):
                         break
     if(a == '3'):
-        pass # This part of the program is not completed 
+        pass # This part of the program is not completed
     else:
         sys.exit()
