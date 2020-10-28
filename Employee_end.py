@@ -51,12 +51,17 @@ def new_user( name, phone, email):
     mydb.commit()
     return (True,"Successfully new Account Created with account number - "+account+"\nFirst Transaction id is " + account+'1')
 
-def check_account( account):
-    mycursor.execute("select account from user")
-    for i in mycursor:
-        if i == (account,):
-            return True
-    return False
+def check_account(account):
+        if(account.isdigit()):
+                if(len(account) == 16):
+                    mycursor.execute("select account from user")
+                    for i in mycursor:
+                        if i == (account,):
+                            return (True,)
+                    return (False, "Account Doesn't Exists\n")
+                return(False, "Account Number is not of 16 digits\n")
+        return(False, "Please Enter Numbers Only\n")
+    
 
 def account_details( reciever):
     mycursor.execute("Select account, name, email, Balance from user where account = %s", (reciever,))

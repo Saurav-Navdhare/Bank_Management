@@ -4,14 +4,6 @@ import sys
 
 import Employee_end as Ee
 
-def anvv(account):
-        if(account.isdigit()):
-                if(len(account) == 16):
-                    if(Ee.check_account(account)):
-                        return (True,)
-                    return (False, "Account Doesn't Exists\n")
-                return(False, "Account Number is not of 16 digits\n")
-        return(False, "Please Enter Numbers Only\n")
 while(True):
     a = int(input('''Press the following keys for the repective functions\n
         1 - New User
@@ -49,7 +41,7 @@ while(True):
                             amount = int(amount)
                             sender = input("Enter the Sender's account Number\n")
                             if(anvv(sender)[0]):
-                                beneficiary = input("Enter the Benificiarie's Account Number\n")
+                                beneficiary = input("Enter the beneficiarie's Account Number\n")
                                 if(anvv(beneficiary)[0]):
                                     value = Ee.trans(amount, 1, sender, beneficiary)
                                     print(value)
@@ -57,7 +49,7 @@ while(True):
                                     if(c != 'y'):
                                         break
                                 else:
-                                    print("Benificier's Account Dosen't Exists\n")
+                                    print("beneficier's Account Dosen't Exists\n")
                                     c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                                     if(c != 'y'):
                                         break
@@ -76,14 +68,14 @@ while(True):
                     if(amount.isdigit()):
                         amount = int(amount)
                         sender = input("Enter the Sender's account Number\n")
-                        if(anvv(sender)[0]):
+                        if(Ee.check_account(sender)[0]):
                             value = Ee.trans(amount, b, sender)
                             print(value)
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
                         else:
-                            print(anvv(sender)[1],'\n')
+                            print(Ee.check_account(sender)[1],'\n')
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
@@ -97,14 +89,14 @@ while(True):
                     if(amount.isdigit()):
                         amount = int(amount)
                         Beneficiary = input("Enter the Beneficier's account Number\n")
-                        if(anvv(Beneficiary)[0]):
+                        if(Ee.check_account(Beneficiary)[0]):
                             value = Ee.trans(amount, b, Beneficiary)
                             print(value, '\n')
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
                         else:
-                            print(anvv(Beneficiary)[1], '\n')
+                            print(Ee.check_account(Beneficiary)[1], '\n')
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
@@ -116,30 +108,30 @@ while(True):
     elif(a == 4):
         while(True):
             account = input('Enter Account Number\n')
-            if(anvv(account)[0]):
+            if(Ee.check_account(account)[0]):
                 value = Ee.trans_history(account)
                 if(value[0]):
                     if(value[1][0] is not None):
                         print("Transid      Sender      Beneficiary      Date      Sender_amount")
                         for i in value[1][0]:
-                            print(i, end = ' ')
+                            print(i, end = '  ')
                         print()
                     if(value[1][1] is not None):
                         print('Transid      Sender      Beneficiary      Date      Beneficiary_amount')
                         for i in value[1][1]:
-                            print(i, end = ' ')
+                            print(i, end = '  ')
                         print()
                 c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                 if(c != 'y'):
                     break
             else:
-                print(anvv(account)[1])
+                print(Ee.check_account(account)[1])
                 c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                 if(c != 'y'):
                     break
     elif(a == 5):
         account = input('Enter Account Number\n')
-        if(anvv(account)[0]):
+        if(Ee.check_account(account)[0]):
             b = input('Enter Y if you are Sure to delete account where account number = '+account + '\n').lower()
             if(b == 'y'):
                  value = Ee.trans(Ee.check_balance(account), 4, account)
