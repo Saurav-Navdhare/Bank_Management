@@ -15,7 +15,7 @@ while(True):
                     print(value)
                     c = input('Enter Y to Do again Else Press Any key to Menu\n').lower()
                     if(c != 'y'):
-                        break            
+                        break
                 else:
                     print("beneficier's Account Dosen't Exists\n")
                     c = input('Enter Y to Do again Else Press Any key to Menu\n').lower()
