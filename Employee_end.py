@@ -31,7 +31,6 @@ def check_details(phone, email):
         mycursor.execute('select email from user')
         for j in mycursor:
             if(email in j):
-                k=2
                 break
         return (True,)
     if(k == 1):
@@ -61,7 +60,6 @@ def check_account(account):
                     return (False, "Account Doesn't Exists\n")
                 return(False, "Account Number is not of 16 digits\n")
         return(False, "Please Enter Numbers Only\n")
-    
 
 def account_details( reciever):
     mycursor.execute("Select account, name, email, Balance from user where account = %s", (reciever,))

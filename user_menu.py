@@ -48,5 +48,3 @@ while(True):
         pass # This part of the program is not completed 
     else:
         sys.exit()
-    
-
