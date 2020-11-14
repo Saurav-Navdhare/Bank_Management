@@ -80,8 +80,6 @@ def transid(account):
 
 # mode must be entered from frontend side 1 = Transfer, 2 = Cash Withdrwal, 3 = Cash Deposit
 def trans(amount, mode, account, reciever='Self'):
-    # Mode 1 is only vaialable on Customer side, all are avaialable on Employee side
-
     if(mode == 1):
         if(int(check_balance(account)) >= 1000+int(amount)):
             mycursor.execute("Select account, name, email from user where account = %s", (reciever,))
@@ -92,7 +90,7 @@ def trans(amount, mode, account, reciever='Self'):
             if(a == 'y'):
                 tid = transid(account)
                 mycursor.execute("insert into trans values(%s,%s,%s,%s,%s,%s)", (account, reciever, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account) - amount))
-                mycursor.execute("insert into amount values(%s,%s,%s)", tid, check_account(account) - amount, check_balance(account) + amount)
+                mycursor.execute("insert into amount values(%s,%s,%s)", tid, check_balance(account) - amount, check_balance(account) + amount)
                 mycursor.execute("Update user set balance = balance - %s where account = %s", (amount, account))
                 mycursor.execute("Update user set balance = balance + %s and transid = %s where account = %s", (amount, tid, reciever))
                 mydb.commit()
@@ -113,8 +111,8 @@ def trans(amount, mode, account, reciever='Self'):
 
     if(mode == 3):
         tid = transid(account)
-        mycursor.execute("insert into trans values('self', %s, %s, %s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account)+amount))
-        mycursor.execute("insert into amount values(%s,%s,%s)", (tid, "Null", check_balance(amount)+amount))
+        mycursor.execute("insert into trans values('self', %s, %s, %s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount))
+        mycursor.execute("insert into amount values(%s,%s,%s)", (tid, "Null", check_balance(account)+int(amount)))
         mycursor.execute("update user set balance = balance + %s where account = %s", (amount, account))
         mycursor.execute("update user set transid = %s where account = %s", (tid, account))
         mydb.commit()
@@ -122,12 +120,12 @@ def trans(amount, mode, account, reciever='Self'):
 
     if(mode == 4):
         tid = transid(account)
-        mycursor.execute("insert into trans values(%s,'self',%s,%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), check_balance(account), 0))
+        mycursor.execute("insert into trans values(%s,'self',%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), check_balance(account)))
         mycursor.execute("insert into amount values(%s,%s,%s)", (tid, 0, "Null"))
         mycursor.execute("delete from user where account = %s", (account,))
         mycursor.execute("update user set balance = balance +%s and transid = %s where account = %s", (amount, tid, reciever))
         mydb.commit()
-        return str(amount)+ " Rs has been withdrawn from " + account + " with transid "+tid+"And Account Has been Closed"
+        return str(amount)+ " Rs has been withdrawn from " + account + " with transid "+tid+" and Account Has been Closed"
 
 def istransid( account, transid):
     mycursor.execute(

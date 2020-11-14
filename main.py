@@ -1,7 +1,5 @@
 #Employee Menu
 import sys
-
-
 import Employee_end as Ee
 
 while(True):
@@ -87,7 +85,6 @@ while(True):
             else:
                     amount = input("Enter the amount in Rupees to Transfer\n")
                     if(amount.isdigit()):
-                        amount = int(amount)
                         Beneficiary = input("Enter the Beneficier's account Number\n")
                         if(Ee.check_account(Beneficiary)[0]):
                             value = Ee.trans(amount, b, Beneficiary)
