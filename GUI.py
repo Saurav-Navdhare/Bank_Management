@@ -2,6 +2,17 @@ import tkinter as tk
 import Employee_end as Ee
 import sys
 
+app = tk.Tk()
+app.title('Bank Management')
+app.geometry('1280x720')
+app.minsize(1280, 720)
+Mm = tk.LabelFrame(app)
+O = tk.Frame(app)
+F = tk.LabelFrame(O)
+L1 = tk.Label(O)
+Button_1 = tk.Button(O)
+Button_2 = tk.Button(O)
+
 def command_1(a, b, c):
     if (a and b and c):
         result = Ee.new_user(a, b, c)
@@ -55,16 +66,6 @@ def new_user():
     phone.place(relx = 0.4, rely = 0.6)
     B11.place(relx = 0.4, rely = 0.8)
 
-app = tk.Tk()
-app.title('Bank Management')
-app.geometry('1280x720')
-app.minsize(1280, 720)
-Mm = tk.LabelFrame(app)
-O = tk.Frame(app)
-F = tk.LabelFrame(O)
-L1 = tk.Label(O)
-Button_1 = tk.Button(O)
-Button_2 = tk.Button(O)
 def Main_Menu():
     Mm = tk.LabelFrame(app,
                        text = 'Main Menu',
