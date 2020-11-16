@@ -20,27 +20,20 @@ mycursor.execute('create table if not exists trans(Sender char(17) references us
 mycursor.execute('create table if not exists amount(transid varchar(25) not null Primary Key,Sender_amount char(17), Beneficiary_amount char(17) )')
 # Will be called When approved by an employee ; Employee Menu Side
 
-def check_details(phone, email):
-    k = 0
-    mycursor.execute('Select phone from user')
-    for i in mycursor:
-        if(phone in i):
-            k=1
-            break
-    else:
-        mycursor.execute('select email from user')
+def check_details(email):
+    mycursor.execute('Select email from user')
+    if(not(mycursor)):
         for j in mycursor:
             if(email in j):
                 break
-        return (True,)
-    if(k == 1):
-        return (False,'Phone Number Already Exists in Database')
-    return (False,'Email Already Exsists in database')
-
+            return (True,)
+        return (False,'Email Already Exsists in database')
+    return (True,)
+    
 def new_user( name, phone, email):
 
-    if not(check_details(phone ,email)[0]):
-        return check_details(phone,email)
+    if not(check_details(email)[0]):
+        return check_details(email)
 
     account = datetime.today().strftime('%Y%m%d%H%M%S%f')[:16]
 
