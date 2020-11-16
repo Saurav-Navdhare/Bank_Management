@@ -29,7 +29,7 @@ def check_details(email):
             return (True,)
         return (False,'Email Already Exsists in database')
     return (True,)
-    
+
 def new_user( name, phone, email):
 
     if not(check_details(email)[0]):

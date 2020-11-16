@@ -2,7 +2,7 @@ import tkinter as tk
 import Employee_end as Ee
 import sys
 
-
+global Mm, O,F, L1, Button_1, Button_2
 
 def command_1(a, b, c):
     global L1, Button_1, Button_2
@@ -26,7 +26,6 @@ def back():
         Main_Menu()
 
 def new_user():
-    global O, F
     if(Mm):
         Mm.destroy()
     elif(F):
@@ -58,14 +57,12 @@ def new_user():
     email.place(relx = 0.4, rely = 0.4)
     phone.place(relx = 0.4, rely = 0.6)
     B11.place(relx = 0.4, rely = 0.8)
-    
 
 app = tk.Tk()
 app.title('Bank Management')
 app.geometry('1280x720')
 app.minsize(1280, 720)
 def Main_Menu():
-    global Mm 
     Mm = tk.LabelFrame(app,
                        text = 'Main Menu',
                        font = ('Helvetica',20,'bold'),
@@ -86,7 +83,7 @@ def Main_Menu():
     B4.place( relx = 0.8, rely = 0.3, anchor = 'n', width = 200)
     B5 = tk.Button(Mm, text = 'Close Account', font = 'Helvetica', bg = 'yellow')
     B5.place(relx = 0.8, rely = 0.5, anchor = 'n', width = 200)
-    B6 = tk.Button(Mm, text = 'Exit', font = 'Helvetica', bg = 'yellow', command = lambda: sys.exit())
+    B6 = tk.Button(Mm, text = 'Exit', font = 'Helvetica', bg = 'yellow', command =sys.exit)
     B6.place(relx = 0.8, rely = 0.7, anchor = 'n', width = 200)
 Main_Menu()
 app.mainloop()
