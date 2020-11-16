@@ -35,8 +35,6 @@ def back():
 def new_user():
     if(Mm):
         Mm.destroy()
-    elif(F):
-        F.destroy()
     O = tk.Frame(app, height = 720, width = 1080)
     O.place(relx = 0.1, rely = 0.1)
     F = tk.LabelFrame(O,
