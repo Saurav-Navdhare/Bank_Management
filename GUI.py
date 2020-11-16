@@ -2,7 +2,12 @@ import tkinter as tk
 import Employee_end as Ee
 import sys
 
-global Mm, O,F, L1, Button_1, Button_2
+Mm = tk.LabelFrame(app)
+O = tk.Frame(app)
+F = tk.LabelFrame(O)
+L1 = tk.Label(O)
+Button_1 = tk.Button(O)
+Button_2 = tk.Button(O)
 
 def command_1(a, b, c):
     global L1, Button_1, Button_2
