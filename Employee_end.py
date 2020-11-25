@@ -15,14 +15,14 @@ mydb = mysql.connector.connect(host='localhost',
 mycursor =  mydb.cursor(buffered=True)
 mycursor.execute('Create database if not exists bank_Management')
 mycursor.execute('Use Bank_Management')
-mycursor.execute('create table if not exists user(account char(17) Primary Key, name Varchar(20) Not Null, Phone char(11) Unique Not Null,email varchar(35) Unique Not Null, Balance int(10) check(Balance >-1) Not Null, transid varchar(25) not null, TOA varchar(10) Not Null, DOC date Not Null)')
+mycursor.execute('create table if not exists user(account char(17) Primary Key, name Varchar(20) Not Null, Phone char(11) Not Null,email varchar(35) Unique Not Null, Balance int(10) check(Balance >-1) Not Null, transid varchar(25) not null, TOA varchar(10) Not Null, DOC date Not Null)')
 mycursor.execute('create table if not exists trans(Sender char(17) references user(account), Beneficiary char(17) references user(account), transid varchar(25) not null, date date not null, amount int(10))')
 mycursor.execute('create table if not exists amount(transid varchar(25) not null Primary Key,Sender_amount char(17), Beneficiary_amount char(17) )')
 # Will be called When approved by an employee ; Employee Menu Side
 
 def check_details(email):
     mycursor.execute('Select email from user')
-    if(not(mycursor)):
+    if(mycursor):
         for j in mycursor:
             if(email in j):
                 break
@@ -66,6 +66,11 @@ def check_balance( account):
                 return j
     return "Account does not Exsist"
 
+def account_number(Name):
+    mycursor.execute('select account, name from user where name like %s', ('%'+Name+'%',))
+    return mycursor.fetchall()
+    
+
 def transid(account):
     mycursor.execute("select transid from user where account = %s", (account,))
     for i in mycursor:
@@ -75,6 +80,8 @@ def transid(account):
 def trans(amount, mode, account, reciever='Self'):
     if(mode == 1):
         if(int(check_balance(account)) >= 1000+int(amount)):
+            if(amount < 1):
+                return "Please Enter Valid Amount"
             mycursor.execute("Select account, name, email from user where account = %s", (reciever,))
             for i in mycursor:
                 print(i, end='')
