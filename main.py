@@ -1,15 +1,25 @@
 #Employee Menu
 import sys
+import mysql.connector
 import Employee_end as Ee
 
+mydb = mysql.connector.connect(host='localhost',
+                                user='root',
+                                passwd='admin')
+mycursor =  mydb.cursor(buffered=True)
+
 while(True):
-    a = int(input('''Press the following keys for the repective functions\n
+    a = input('''Press the following keys for the repective functions\n
         1 - New User
         2 - User Details
         3 - Transaction
         4 - Transaction History
         5 - Close Account
-        6 - Else press any key to exit\n'''))
+        6 - Else press any key to exit\n''')
+    if(a.isdigit()):
+        a = int(a)
+    else:
+        sys.exit()
     if (a == 1):
         b = input('Enter Name \n\n').capitalize()
         c = input('\n\nEnter Phone Number\n\n')
@@ -18,14 +28,8 @@ while(True):
         print(value[1])
 
     elif(a == 2):
-        b = input('Enter Account Number\n')
-        if(Ee.check_account(b)[0]):
-            for i in Ee.account_details(b):
-                for j in i:
-                    print(j, "  ",end = '')
-                print()
-        else:
-            print(Ee.check_account(b)[1])
+        b = Ee.select_account(input('Enter Name of Account Holder\n'))
+        mycursor.execute("select * from user where account = %s", (b,))
 
     elif(a == 3):
         while(True):
@@ -37,22 +41,22 @@ while(True):
                         amount = input("Enter the amount in Rupees to Transfer\n")
                         if(amount.isdigit()):
                             amount = int(amount)
-                            sender = input("Enter the Sender's account Number\n")
-                            if(Ee.check_account(sender)[0]):
-                                beneficiary = input("Enter the beneficiarie's Account Number\n")
-                                if(Ee.check_account(beneficiary)[0]):
+                            sender = Ee.select_account(input('Enter Name of Account Holder\n'))
+                            if(sender is not None):
+                                beneficiary = Ee.select_account(input('Enter Name of Account Holder\n'))
+                                if(beneficiary is not None):
                                     value = Ee.trans(amount, 1, sender, beneficiary)
                                     print(value)
                                     c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                                     if(c != 'y'):
                                         break
                                 else:
-                                    print("beneficier's Account Dosen't Exists\n")
+                                    print("Beneficiar's Account Do not Exsists\n")
                                     c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                                     if(c != 'y'):
                                         break
                             else:
-                                print("Sender's Account Number Doesn't Exists\n")
+                                print("Sender's Account Do not Exsists\n")
                                 c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                                 if(c != 'y'):
                                     break
@@ -65,15 +69,15 @@ while(True):
                     amount = input("Enter the amount in Rupees to Transfer\n")
                     if(amount.isdigit()):
                         amount = int(amount)
-                        sender = input("Enter the Sender's account Number\n")
-                        if(Ee.check_account(sender)[0]):
+                        sender = Ee.select_account(input('Enter Name of Account Holder\n'))
+                        if(sender is not None):
                             value = Ee.trans(amount, b, sender)
                             print(value)
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
                         else:
-                            print(Ee.check_account(sender)[1],'\n')
+                            print("Sender's Account Do not Exsists\n")
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
@@ -85,15 +89,14 @@ while(True):
             else:
                     amount = input("Enter the amount in Rupees to Transfer\n")
                     if(amount.isdigit()):
-                        Beneficiary = input("Enter the Beneficier's account Number\n")
-                        if(Ee.check_account(Beneficiary)[0]):
+                        Beneficiary = Ee.select_account(input("Enter the Name of account Holder\n"))
+                        if(Beneficiary is not None):
                             value = Ee.trans(amount, b, Beneficiary)
                             print(value, '\n')
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
                         else:
-                            print(Ee.check_account(Beneficiary)[1], '\n')
                             c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                             if(c != 'y'):
                                 break
@@ -104,8 +107,8 @@ while(True):
                             break
     elif(a == 4):
         while(True):
-            account = input('Enter Account Number\n')
-            if(Ee.check_account(account)[0]):
+            account = Ee.select_account(input('Enter Name of Account Holder\n'))
+            if(account is not None):
                 value = Ee.trans_history(account)
                 if(value[0]):
                     if(value[1][0] is not None):
@@ -122,16 +125,21 @@ while(True):
                 if(c != 'y'):
                     break
             else:
-                print(Ee.check_account(account)[1])
+                print("Account does not exsists")
                 c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
                 if(c != 'y'):
                     break
     elif(a == 5):
-        account = input('Enter Account Number\n')
-        if(Ee.check_account(account)[0]):
+        account = Ee.select_account(input('Enter Name of Account Holder\n'))
+        if(account is not None):
             b = input('Enter Y if you are Sure to delete account where account number = '+account + '\n').lower()
             if(b == 'y'):
-                 value = Ee.trans(Ee.check_balance(account), 4, account)
-                 print(value, '\n')
+                value = Ee.trans(str(Ee.check_balance(account)), 4, account)
+                print(value, '\n')
+        else:
+            print("Account does not exsists")
+            c = input('Enter Y to Do again Else Press Any key to Exit\n').lower()
+            if(c != 'y'):
+                break
     else:
         sys.exit()

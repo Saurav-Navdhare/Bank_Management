@@ -20,11 +20,11 @@ def C1(name, phone, email):
         else:
             TL1['text'] = A[1]
 
-def T1(a, b, c, d):  # Amount, Sender, Beneficiar, Mode
+def T1(a, b, c, d):  # Amount, Mode, Sender, Beneficiar
     global Fr
     FrL4 = tk.Label(Fr, font = ('Arial', 18), background = 'yellow')
     FrL4.place(relx = 0.3, rely = 0.9)
-    e = Ee.trans(str(a),d, str(b), str(c))
+    e = Ee.trans(str(a),b, str(c), str(d))
     FrL4['text'] = e
 
 def accsel(z):
@@ -108,7 +108,7 @@ def acc(a,z):
             FrE3.insert(tk.END, '500')
             FrL4 = tk.Label(Fr, text = '', font = ('Arial',18))
             FrL4.place(relx = 0.4, rely = 0.8)
-            FrB3 = tk.Button(Fr, text = 'Make Transaction', font = ('Arial', 18), activebackground = 'yellow', command = lambda : T1(FrE3.get(),FrE1.get, FrE2.get(), 1))
+            FrB3 = tk.Button(Fr, text = 'Make Transaction', font = ('Arial', 18), activebackground = 'yellow')
             FrB3.place(relx = 0.3, rely = 0.7)
             FrB4 = tk.Button(Fr, text = 'Main Menu', font = ('Arial',18),activebackground = 'yellow', command = main_menu)
             FrB4.place(relx = 0.6, rely = 0.8)
@@ -126,6 +126,15 @@ def TM1():
     FrL2.place(relx = 0.2, rely = 0.4)
     FrB2 = tk.Button(Fr, text = "Select", font = ('Arial', 18), activebackground = 'yellow', command = lambda : accsel(2))
     FrB2.place(relx = 0.6, rely = 0.4)
+
+def TM2():
+    global Fr, FrB1, FrB2
+    Fr = tk.LabelFrame(F, text = 'Bank to Bank Transaction', font = ('Arial', 18, 'bold'))
+    Fr.place(relx = 0, rely = 0, relwidth = 1, relheight = 1)
+    FrL1 = tk.Label(Fr, text = "Sender's Account Number", font = ('Arial', 18))
+    FrL1.place(relx = 0.2, rely = 0.25)
+    FrB1 = tk.Button(Fr, text = "Select", font = ('Arial', 18), activebackground = 'yellow', command = lambda : accsel(1))
+    FrB1.place(relx = 0.6, rely = 0.25)
 
 app = tk.Tk()
 app.geometry('1280x720')
@@ -163,7 +172,7 @@ def Transaction():
     TL1.place(relx = 0.3, rely = 0.1, relwidth = 0.25)
     TB1 = tk.Button(F, text = 'Bank to Bank', bg = 'grey', activebackground = 'yellow', command = TM1)
     TB1.place(relx = 0.3, rely = 0.2, relwidth = 0.25)
-    TB2 = tk.Button(F, text = 'Cash Withdrawal', bg = 'grey', activebackground = 'yellow')
+    TB2 = tk.Button(F, text = 'Cash Withdrawal', bg = 'grey', activebackground = 'yellow', command = TM2)
     TB2.place(relx = 0.3,rely = 0.4, relwidth = 0.25)
     TB3 = tk.Button(F, text = 'Cash Deposit', bg = 'grey', activebackground = 'yellow')
     TB3.place(relx = 0.3, rely = 0.6, relwidth = 0.25)

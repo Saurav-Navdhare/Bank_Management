@@ -21,19 +21,21 @@ mycursor.execute('create table if not exists amount(transid varchar(25) not null
 # Will be called When approved by an employee ; Employee Menu Side
 
 def check_details(email):
+    k = 0
     mycursor.execute('Select email from user')
-    if(mycursor):
-        for j in mycursor:
-            if(email in j):
-                break
-            return (True,)
+    for j in mycursor:
+        k += 1
+        if(email in j):
+            break
+        return (True,)
+    if(k > 0):
         return (False,'Email Already Exsists in database')
     return (True,)
 
 def new_user( name, phone, email):
-
-    if not(check_details(email)[0]):
-        return check_details(email)
+    k = check_details(email)
+    if not(k[0]):
+        return k
 
     account = datetime.today().strftime('%Y%m%d%H%M%S%f')[:16]
 
@@ -43,28 +45,15 @@ def new_user( name, phone, email):
     mydb.commit()
     return (True,"Successfully new Account Created with account number - "+account+"\nFirst Transaction id is " + account+'1')
 
-def check_account(account):
-        if(account.isdigit()):
-                if(len(account) == 16):
-                    mycursor.execute("select account from user")
-                    for i in mycursor:
-                        if i == (account,):
-                            return (True,)
-                    return (False, "Account Doesn't Exists\n")
-                return(False, "Account Number is not of 16 digits\n")
-        return(False, "Please Enter Numbers Only\n")
-
 def account_details( reciever):
     mycursor.execute("Select account, name, email, Balance from user where account = %s", (reciever,))
     return mycursor
 
 def check_balance( account):
-    if(check_account(account)):
         mycursor.execute("select balance from user where account = %s", (account,))
         for i in mycursor:
             for j in i:
                 return j
-    return "Account does not Exsist"
 
 def account_number(Name):
     mycursor.execute('select account, name from user where name like %s', ('%'+Name+'%',))
@@ -78,54 +67,57 @@ def transid(account):
 
 # mode must be entered from frontend side 1 = Transfer, 2 = Cash Withdrwal, 3 = Cash Deposit
 def trans(amount, mode, account, reciever='Self'):
-    if(mode == 1):
-        if(int(check_balance(account)) >= 1000+int(amount)):
-            if(amount < 1):
-                return "Please Enter Valid Amount"
-            mycursor.execute("Select account, name, email from user where account = %s", (reciever,))
-            for i in mycursor:
-                print(i, end='')
-            print()
-            a = input('Press Y if the above details about the reciever are correct\n').lower()
-            if(a == 'y'):
-                tid = transid(account)
-                mycursor.execute("insert into trans values(%s,%s,%s,%s,%s,%s)", (account, reciever, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account) - amount))
-                mycursor.execute("insert into amount values(%s,%s,%s)", tid, check_balance(account) - amount, check_balance(account) + amount)
-                mycursor.execute("Update user set balance = balance - %s where account = %s", (amount, account))
-                mycursor.execute("Update user set balance = balance + %s and transid = %s where account = %s", (amount, tid, reciever))
+    if(amount.isdigit()):
+        if(mode == 1):
+            if(int(check_balance(account)) >= 1000+int(amount)):
+                if(amount < 1):
+                    return "Please Enter Valid Amount"
+                mycursor.execute("Select account, name, email from user where account = %s", (reciever,))
+                if(mycursor is not None):
+                    print('Account Number,  Name,  Email')
+                    for i in mycursor:
+                        print(i, end=', ')
+                    print()
+                a = input('Press Y if the above details about the reciever are correct\n').lower()
+                if(a == 'y'):
+                    tid = transid(account)
+                    mycursor.execute("insert into trans values(%s,%s,%s,%s,%s,%s)", (account, reciever, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account) - amount))
+                    mycursor.execute("insert into amount values(%s,%s,%s)", tid, check_balance(account) - amount, check_balance(account) + amount)
+                    mycursor.execute("Update user set balance = balance - %s where account = %s", (amount, account))
+                    mycursor.execute("Update user set balance = balance + %s and transid = %s where account = %s", (amount, tid, reciever))
+                    mydb.commit()
+                    return f"{amount} Rs has been transferred from {account} to {reciever}"
+                return "Transaction is Aborted"
+            return "Insufficient Balance"
+        if(mode == 2):
+            tid = transid(account)
+            if(check_balance(account) >= amount+1000):
+                mycursor.execute("insert into trans values(%s,'self',%s,%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account)-amount))
+                mycursor.execute("insert into amount values(%s,%s,%s)", (tid, check_balance(amount)-amount, "Null"))
+                mycursor.execute("update user set balance = balance -%s where account = %s", (amount, account))
+                mycursor.execute("update user set balance = balance +%s and transid = %s where account = %s", (amount, tid, reciever))
                 mydb.commit()
-                return f"{amount} Rs has been transferred from {account} to {reciever}"
-            return "Transaction is Aborted"
-        return "Insufficient Balance"
+                return str(amount)+ " Rs has been withdrawn from " + account
+            return "Insufficient Balance"
 
-    if(mode == 2):
-        tid = transid(account)
-        if(check_balance(account) >= amount+1000):
-            mycursor.execute("insert into trans values(%s,'self',%s,%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount, check_balance(account)-amount))
-            mycursor.execute("insert into amount values(%s,%s,%s)", (tid, check_balance(amount)-amount, "Null"))
-            mycursor.execute("update user set balance = balance -%s where account = %s", (amount, account))
+        if(mode == 3):
+            tid = transid(account)
+            mycursor.execute("insert into trans values('self', %s, %s, %s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount))
+            mycursor.execute("insert into amount values(%s,%s,%s)", (tid, "Null", check_balance(account)+int(amount)))
+            mycursor.execute("update user set balance = balance + %s where account = %s", (amount, account))
+            mycursor.execute("update user set transid = %s where account = %s", (tid, account))
+            mydb.commit()
+            return f'{amount} rs has been credited to {account}'
+
+        if(mode == 4):
+            tid = transid(account)
+            mycursor.execute("insert into trans values(%s,'self',%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), check_balance(account)))
+            mycursor.execute("insert into amount values(%s,%s,%s)", (tid, 0, "Null"))
+            mycursor.execute("delete from user where account = %s", (account,))
             mycursor.execute("update user set balance = balance +%s and transid = %s where account = %s", (amount, tid, reciever))
             mydb.commit()
-            return str(amount)+ " Rs has been withdrawn from " + account
-        return "Insufficient Balance"
-
-    if(mode == 3):
-        tid = transid(account)
-        mycursor.execute("insert into trans values('self', %s, %s, %s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), amount))
-        mycursor.execute("insert into amount values(%s,%s,%s)", (tid, "Null", check_balance(account)+int(amount)))
-        mycursor.execute("update user set balance = balance + %s where account = %s", (amount, account))
-        mycursor.execute("update user set transid = %s where account = %s", (tid, account))
-        mydb.commit()
-        return f'{amount} rs has been credited to {account}'
-
-    if(mode == 4):
-        tid = transid(account)
-        mycursor.execute("insert into trans values(%s,'self',%s,%s,%s)", (account, tid, date.today().strftime('%Y/%m/%d'), check_balance(account)))
-        mycursor.execute("insert into amount values(%s,%s,%s)", (tid, 0, "Null"))
-        mycursor.execute("delete from user where account = %s", (account,))
-        mycursor.execute("update user set balance = balance +%s and transid = %s where account = %s", (amount, tid, reciever))
-        mydb.commit()
-        return str(amount)+ " Rs has been withdrawn from " + account + " with transid "+tid+" and Account Has been Closed"
+            return str(amount)+ " Rs has been withdrawn from " + account + " with transid "+tid+" and Account Has been Closed"
+    return "Please Enter Digits Only"
 
 def istransid( account, transid):
     mycursor.execute(
@@ -175,13 +167,42 @@ def trans_history(account):
                     return [True, mycursor.fetchall()]
                 return b[1]
 def close_account( account):
-    if(check_account(account)):
-        if(check_balance(account) == '0'):
-            mycursor.execute("delete from user where account = %s", (account,))
-            mydb.commit()
-            return "Account deleted Successfully"
-        k = check_balance(account)
-        trans(k, 3, account)
+    if(check_balance(account) == '0'):
         mycursor.execute("delete from user where account = %s", (account,))
-        return "Account deleted succesfully and Rs " + k + " will be returned to you as cash"
-    return "account doesn't exsist"
+        mydb.commit()
+        return "Account deleted Successfully"
+    k = check_balance(account)
+    trans(k, 3, account)
+    mycursor.execute("delete from user where account = %s", (account,))
+    return "Account deleted succesfully and Rs " + k + " will be returned to you as cash"
+
+def select_account(Name):
+    mycursor.execute('select Account, Name from user where Name like %s', (Name,))
+    if(mycursor is None):
+        print("No Account Founded")
+    k=0
+    l=[]
+    for i in mycursor:
+        if(i):
+            k+=1
+            print(k, '>', i)
+            l.append(i)
+    b = 'y'
+    while(b.lower() == 'y'):
+        if(k==0):
+            print("Account Do not Exsits\n")
+            return None
+        else:
+            a = input('Enter Serial Number\n')
+            if(a.isdigit()):
+                a = int(a)
+                if(k >= a):
+                    return l[a-1][0]
+                else:
+                    print('Please select from given')
+                    b = input('Press Y to select Again else Press any other key to exit\n')
+            else:
+                print('Please Enter Digits Only')
+                b = input('Press Y to select Again else Press any other key to exit\n')
+    else:
+        return None
